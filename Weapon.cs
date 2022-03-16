@@ -1,27 +1,43 @@
 
-    class Weapon
-    {
-        public int Damage;
-        public int Bullets;
+class Weapon
+{
+    private uint _damage;
+    private uint _bullets;
 
-        public void Fire(Player player)
-        {
-            player.Health -= Damage;
-            Bullets -= 1;
-        }
+    public bool CanFire => _bullets > 0;
+
+    public void Fire(Player player)
+    {
+        player.TakeDamage(_damage);
+        _bullets--;
     }
+}
 
-    class Player
+class Player
+{
+    private uint _health;
+
+    public bool IsAlive => _health > 0;
+
+    public void TakeDamage(uint damage)
     {
-        public int Health;
+        if (IsAlive)
+            return;
+
+        if (_health < damage)
+            _health = 0;
+        else
+            _health -= damage;
     }
+}
 
-    class Bot
+class Bot
+{
+    public Weapon Weapon { get; private set; }
+
+    public void OnSeePlayer(Player player)
     {
-        public Weapon Weapon;
-
-        public void OnSeePlayer(Player player)
-        {
+        if (player.IsAlive)
             Weapon.Fire(player);
-        }
     }
+}
